@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>p4 to HTML5</title>
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<script type="text/javascript" src="scripts/deceptor.js"></script>
+<script type="text/javascript" src="scripts/algos.js"></script>
+<script type="text/javascript" src="scripts/config.js"></script>
+<script type="text/javascript" src="scripts/p4.js"></script>
+<script type="text/javascript" src="scripts/main.js"></script>
+<script type="text/javascript" src="thirdparty/filesaver.js"></script>
+<script type="text/javascript" src="thirdparty/blob.js"></script>
+
+</head>
+
+<body>
+
+<div id="wrapper">
+    <nav id="nav">
+        <ul id="navigation">
+            <li><a href="#"><button><img src = "images/menu.gif" width="10px"></button></a>
+                <ul id="closemenu">
+                    <li><a href="#" id="btnMap">Load Map...</a></li>
+                    <li><a href="#">Select Agent &raquo;</a>
+                        <ul id = "mnuAgents">
+                        <!--populated dynamically-->
+                        </ul>					
+                    </li>				
+                    <li><a href="#" id="btnSave">Generate Map Source</a></li>                
+                    <li><a href="#" id="btnConfig">Config...</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+</div><!--end wrapper-->
+<button id="btnStart">X</button>
+<button id="btnGoal">X</button>
+<button id="btnWay">X</button>
+<button id="btnSearch"><img id="imgPlay" src = "images/play.gif" width="10px"></button>
+<button id="btnStop"><img src = "images/stop.gif" width="10px"></button>&nbsp;
+<button id="btnReset">Reset</button>&nbsp;
+<button id="btnClear">Clear</button>&nbsp;
+<input type="range" id="rngSlider" min="1" max="10" value="0" step="1" default = "1">
+<input type="file" id="btnFile" title= "Load map"><!--hidden-->
+<br>
+<div id="stickybtns">
+    <button id="btnGround">Gr</button>
+    <button id="btnWater">Wa</button>
+    <button id="btnSwamp">Sw</button>
+    <button id="btnTree">Tr</button>
+    <button id="btnOob">Oob</button>
+</div><!--end stickybtns-->
+    <button id="btnDraw"><img src = "images/pencil.png" width="15px"></button>
+    <button id="btnDelta"><img src = "images/delta.png" width="15px"></button>
+    <br>
+
+<div id = "overlay">
+    <!--<form accept-charset = "utf-8">-->
+        <h1>CONFIG</h1>
+            <fieldset>
+            <table>
+            <tr><td width="80px">Agent:</td> <td><select name = "frmAgents" id="frmAgents">
+                    <!--populated dynamically-->
+                    </select>
+            </td></tr>
+            <tr><td>Map:</td> <td><span id="frmMapName"></span>
+             </td></tr>
+            <tr><td>Start:</td> <td><input type = "text" name = "frmStart" id="frmStart">
+             </td></tr>
+            <tr><td>Waypoints:</td> <td><input type = "text" name = "frmWay" id="frmWay">
+             </td></tr>
+            <tr><td>Goals:</td> <td><input type = "text" name = "frmGoals" id="frmGoals">
+            </td></tr>
+            <tr><td>Speed:</td> <td><input type = "text"id="frmSpeed">
+             </td></tr>
+            <tr><td>Deadline:</td> <td><input type = "text"id="frmDeadline">
+             </td></tr>
+             </table>
+            </fieldset>
+            <fieldset>
+            <table>
+            <tr><td colspan = "2" class = "subhead">Validation</td></tr>
+            <tr><td width = "80px">Cut Corners:</td> 
+                <td>
+                    <input type = "radio" name="frmCut" id="frmCut_true" value="true">True
+                    <input type = "radio" name="frmCut" id="frmCut_false" value="false">False
+                </td>
+            </tr>
+            <tr><td>Diagonals:</td> 
+                <td>
+                    <input type = "radio" name="frmDiag" id="frmDiag_true" value="true">True
+                    <input type = "radio" name="frmDiag" id="frmDiag_false" value="false">False
+                </td>
+            </tr>
+            <tr><td>Strict:</td> 
+                <td>
+                    <input type = "radio" name="frmStrict" id="frmStrict_true" value="true">True
+                    <input type = "radio" name="frmStrict" id="frmStrict_false" value="false">False
+                </td>
+            </tr>
+            </table>
+            </fieldset>
+            <fieldset>
+            <table>
+            <tr><td colspan = "2" class="subhead">Terrain Costs</td></tr>
+            <tr><td width="80px">Ground:</td><td><input id="frmG"></td></tr>
+            <tr><td>Trees:</td><td><input id="frmT"></td></tr>
+            <tr><td>Swamp:</td><td><input id="frmS"></td></tr>
+            <tr><td>Water:</td><td><input id="frmW"></td></tr>
+            </table>
+            </fieldset>
+            <div id="submit">
+            <button id="frmCancel">Cancel</button>
+            <button id="frmSubmit">Submit</button>
+            </div><!--end submit-->
+    <!--</form>-->
+</div><!--end overlay-->
+
+        
+<div id="container">
+    <div id="mapbox">
+        <canvas id="cvsMap" width="512" height="512">
+        P425 needs canvas - but your browser doesn't support it!</canvas>
+        <canvas id="cvsLayer1" width="512" height="512"></canvas>
+        <canvas id="cvsLayer2" width="512" height="512"></canvas>
+        <canvas id="cvsLayer3" width="512" height="512"></canvas>
+        <canvas id="cvsLayer3a" width="512" height="512"></canvas>
+        <canvas id="cvsLayer4" width="512" height="512"></canvas>
+        <canvas id="cvsStatus" width="512" height="20">this</canvas>
+    </div><!--end mapbox-->
+    <div id="stepbox">
+        <img id = "btnPrev" src = "images/chev_prev.png" width = "10"> &nbsp; 
+        Step# <span id = "spnStep">&nbsp;-</span> &nbsp; 
+        <img id = "btnNext" src = "images/chev_next.png" width = "10">
+        <div><span id = "spnGoals">&nbsp;</span></div>
+    </div><!--end stepbox-->
+</div><!--end container-->
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>test</title>
+<!--<script type="text/javascript" src="scripts/algos.js"></script>
+-->
+<script type="text/javascript" src="scripts/deceptor.js"></script>
+<script type="text/javascript" src="scripts/p4.js"></script>
+</head>
+
+<body>
+<button id="btn">a button</button>
+<script>
+OCT_CONST = Math.sqrt(2) - 1;
+function Node(coord, g, h, parent){
+    this.coord = coord;
+    this.parent = parent;
+    this.g = g;
+    this.h = h;
+    this.f = g+h;
+    
+    this.isLessThan = function(node1){
+        return (this.f < node1.f);
+    };
+}
+
+function Pq(){
+    this.q = [];
+    this.insert = function(anode){
+        for(var i=0; i<this.q.length; i++){
+            if(anode.isLessThan(this.q[i])){
+                break;
+            }
+        }
+        this.q.splice(i,0,anode);
+    };
+    this.getLength = function(){
+        return this.q.length;
+    };
+    this.pop = function(){
+        return this.q.splice(0,1)[0];
+        /*popped = this.q[0];
+        this.q.splice(0,1);
+        return popped;*/
+    }
+}
+
+function octile(coord, goal){
+    var xlen = Math.abs(coord.x - goal.x);
+    var ylen = Math.abs(coord.y - goal.y);
+    return (Math.max(xlen, ylen) + OCT_CONST * Math.min(xlen, ylen));
+};
+
+
+function Coord(x, y){
+    this.x = x;
+    this.y = y;
+    this.equals = function(acoord){
+        return ((this.x==acoord.x) && (this.y== acoord.y));
+    };
+    this.isAdj = function(acoord){
+        return((Math.abs(acoord.x - this.x)<=1) && (Math.abs(acoord.y - this.y)<=1));
+    };
+    this.isStraight = function(acoord){
+        return((acoord.x == this.x) || (acoord.y == this.y));
+    };
+    this.toString = function(){
+        return "(" + this.x + "," + this.y + ")";
+    }
+}
+
+function Goal(coord){
+    this.id = String.fromCharCode(65 + Goal.currentId++);   //ascii char code - A, B, ...
+    this.coord = coord;
+    this.opt_cost;
+    this.getOpt_cost = function(){
+        return (typeof opt_cost !== 'undefined') ? opt_cost : this.calcOpt_cost();
+    };
+    this.calcOpt_cost = function(){
+        return 2;
+    };
+
+    //this.opt_steps;
+}
+
+    function parseCoords(astring){
+        //astring is a string in the format "(12,14)(24,15)..."
+        astring = astring.trim();
+        var stripped = astring.slice(1,astring.length-1);
+        var anarray = stripped.split(")(");
+        var pair;
+        var coords = [];
+        for(var i=0; i<anarray.length; i++){
+            pair = anarray[i].split(",");
+            coords.push(new Coord(pair[0],pair[1]));
+        }
+        return coords
+    }
+
+var astring = "(12,14)(15,14)(25,40)";
+alert(astring);
+var coords = parseCoords(astring);
+for(var i=0;i<coords.length;i++){
+    alert(coords[i].toString());
+}
+    
+</script>
+</body>
+</html>
